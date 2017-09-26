@@ -29,23 +29,26 @@ module.exports = {
   },
 
   snippetPaths: function() {
-    if (this.app) {
-      var freestyleOptions = this.app.options.freestyle || {};
-      return freestyleOptions.snippetPaths || ['snippets'];
+    if (this.freestyleOptions) {
+      return this.freestyleOptions.snippetPaths || ['snippets'];
     }
     return ['snippets'];
   },
 
   snippetSearchPaths: function() {
-    if (this.app) {
-      var freestyleOptions = this.app.options.freestyle || {};
-      return freestyleOptions.snippetSearchPaths || ['app'];
+    if (this.freestyleOptions) {
+      return this.freestyleOptions.snippetSearchPaths || ['app'];
     }
     return ['app'];
   },
 
-  included: function(/*app, parentAddon*/) {
+  included: function(app) {
     this._super.included.apply(this, arguments);
+    while (typeof app.import !== 'function' && app.app) {
+      app = app.app;
+    }
+
+    this.freestyleOptions = app.options.freestyle;
   },
 
   isDevelopingAddon: function() {
